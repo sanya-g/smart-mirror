@@ -146,11 +146,13 @@ class Weather(Frame):
                 location2 = "%s, %s" % (location_obj['city'], location_obj['region_code'])
 
                 # get weather
-                weather_req_url = "https://api.darksky.net/forecast/%s/%s,%s?lang=%s&units=%s" % (weather_api_token, lat,lon,weather_lang,weather_unit)
+               # weather_req_url = "https://api.darksky.net/forecast/%s/%s,%s?lang=%s&units=%s" % (weather_api_token, lat,lon,weather_lang,weather_unit)
+                weather_req_url = "https://rapidapi.com/community/api/open-weather-map" % (weather_api_token, lat,lon,weather_lang,weather_unit);
             else:
                 location2 = ""
                 # get weather
-                weather_req_url = "https://api.darksky.net/forecast/%s/%s,%s?lang=%s&units=%s" % (weather_api_token, latitude, longitude, weather_lang, weather_unit)
+                weather_req_url = "https://rapidapi.com/community/api/open-weather-map/%s/%s, %s?lang-%s&units=%s" % (weather_api_token, latitude, longitude, weather_lang, weather_unit);
+                #weather_req_url = "https://api.darksky.net/forecast/%s/%s,%s?lang=%s&units=%s" % (weather_api_token, latitude, longitude, weather_lang, weather_unit)
 
             r = requests.get(weather_req_url)
             weather_obj = json.loads(r.text)
