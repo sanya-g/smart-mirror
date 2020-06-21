@@ -23,8 +23,10 @@ news_country_code = 'us'
 weather_api_token = '7bf3cd3817mshf50b92f26dab764p1f5ddajsn2fa97d5600ec' # create account at https://darksky.net/dev/
 weather_lang = 'en' # see https://darksky.net/dev/docs/forecast for full list of language parameters values
 weather_unit = 'us' # see https://darksky.net/dev/docs/forecast for full list of unit parameters values
-latitude = "37.352390" # Set this if IP location lookup does not work for you (must be a string) changed from NONE
-longitude = "-121.953079" # Set this if IP location lookup does not work for you (must be a string) changed from NONE
+#latitude = "37.352390" # Set this if IP location lookup does not work for you (must be a string) changed from NONE
+#longitude = "-121.953079" # Set this if IP location lookup does not work for you (must be a string) changed from NONE
+latitude = NONE
+longitude = NONE
 xlarge_text_size = 94
 large_text_size = 48
 medium_text_size = 28
@@ -147,7 +149,8 @@ class Weather(Frame):
 
                 # get weather
                # weather_req_url = "https://api.darksky.net/forecast/%s/%s,%s?lang=%s&units=%s" % (weather_api_token, lat,lon,weather_lang,weather_unit)
-                weather_req_url = "https://rapidapi.com/community/api/open-weather-map" % (weather_api_token, lat,lon,weather_lang,weather_unit);
+               # weather_req_url = "https://rapidapi.com/community/api/open-weather-map" % (weather_api_token, lat,lon,weather_lang,weather_unit)
+                weather_req_url = "api.openweathermap.org/data/2.5/forecast?q=%s&appid=%s" % ("santa clara",weather_api_token)
             else:
                 location2 = ""
                 # get weather
