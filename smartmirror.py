@@ -23,10 +23,9 @@ news_country_code = 'us'
 weather_api_token = '7bf3cd3817mshf50b92f26dab764p1f5ddajsn2fa97d5600ec' # create account at https://darksky.net/dev/
 weather_lang = 'en' # see https://darksky.net/dev/docs/forecast for full list of language parameters values
 weather_unit = 'us' # see https://darksky.net/dev/docs/forecast for full list of unit parameters values
-#latitude = "37.352390" # Set this if IP location lookup does not work for you (must be a string) changed from NONE
-#longitude = "-121.953079" # Set this if IP location lookup does not work for you (must be a string) changed from NONE
-latitude = NONE
-longitude = NONE
+#latitude and longitude values below are wrong + not used in this code. TBD
+latitude = "37.352390" # Set this if IP location lookup does not work for you (must be a string) changed from None
+longitude = "-121.953079" # Set this if IP location lookup does not work for you (must be a string) changed from None
 xlarge_text_size = 94
 large_text_size = 48
 medium_text_size = 28
@@ -44,19 +43,19 @@ def setlocale(name): #thread proof function to work with locale
 # maps open weather icons to
 # icon reading is not impacted by the 'lang' parameter
 icon_lookup = {
-    'clear-day': "assets/Sun.png",  # clear sky day
-    'wind': "assets/Wind.png",   #wind
-    'cloudy': "assets/Cloud.png",  # cloudy day
-    'partly-cloudy-day': "assets/PartlySunny.png",  # partly cloudy day
-    'rain': "assets/Rain.png",  # rain day
-    'snow': "assets/Snow.png",  # snow day
-    'snow-thin': "assets/Snow.png",  # sleet day
-    'fog': "assets/Haze.png",  # fog day
-    'clear-night': "assets/Moon.png",  # clear sky night
-    'partly-cloudy-night': "assets/PartlyMoon.png",  # scattered clouds night
-    'thunderstorm': "assets/Storm.png",  # thunderstorm
-    'tornado': "assests/Tornado.png",    # tornado
-    'hail': "assests/Hail.png"  # hail
+    'Clear': "assets/Sun.png",  # clear sky day
+  #  'wind': "assets/Wind.png",   #wind
+    'Clouds': "assets/Cloud.png",  # cloudy day
+  #  'partly-cloudy-day': "assets/PartlySunny.png",  # partly cloudy day
+    'Rain': "assets/Rain.png",  # rain day
+    'Snow': "assets/Snow.png",  # snow day
+   # 'snow-thin': "assets/Snow.png",  # sleet day
+    'Fog': "assets/Haze.png",  # fog day
+   # 'clear-night': "assets/Moon.png",  # clear sky night
+   # 'partly-cloudy-night': "assets/PartlyMoon.png",  # scattered clouds night
+    'Thunderstorm': "assets/Storm.png",  # thunderstorm
+    'Tornado': "assests/Tornado.png",    # tornado
+  #  'Hail': "assests/Hail.png"  # hail
 }
 
 
@@ -133,6 +132,10 @@ class Weather(Frame):
         except Exception as e:
             traceback.print_exc()
             return "Error: %s. Cannot get ip." % e
+            
+    @staticmethod
+    def convert_kelvin_to_fahrenheit(kelvin_temp):
+        return 1.8 * (kelvin_temp - 273) + 32
 
     def get_weather(self):
         try:
@@ -146,28 +149,28 @@ class Weather(Frame):
                 lon = location_obj['longitude']
 
                 location2 = "%s, %s" % (location_obj['city'], location_obj['region_code'])
-
-                # get weather
-               # weather_req_url = "https://api.darksky.net/forecast/%s/%s,%s?lang=%s&units=%s" % (weather_api_token, lat,lon,weather_lang,weather_unit)
-               # weather_req_url = "https://rapidapi.com/community/api/open-weather-map" % (weather_api_token, lat,lon,weather_lang,weather_unit)
-                weather_req_url = "api.openweathermap.org/data/2.5/forecast?q=%s&appid=%s" % ("santa clara",weather_api_token)
+                weather_req_url = "api.openweathermap.org/data/2.5/forecast?q=%s&appid=%s" % ("santa clara,ca,us",weather_api_token)
             else:
                 location2 = ""
-                # get weather
-                weather_req_url = "https://rapidapi.com/community/api/open-weather-map/%s/%s, %s?lang-%s&units=%s" % (weather_api_token, latitude, longitude, weather_lang, weather_unit);
-                #weather_req_url = "https://api.darksky.net/forecast/%s/%s,%s?lang=%s&units=%s" % (weather_api_token, latitude, longitude, weather_lang, weather_unit)
+                weather_req_url = "https://community-open-weather-map.p.rapidapi.com/weather"
+                
+            querystring = {"q":"cupertino,us"}
 
-            r = requests.get(weather_req_url)
+            headers = {
+                'x-rapidapi-host': "community-open-weather-map.p.rapidapi.com",
+                'x-rapidapi-key': "7bf3cd3817mshf50b92f26dab764p1f5ddajsn2fa97d5600ec"
+            }
+
+            r = requests.request("GET", weather_req_url, headers=headers, params=querystring)
             weather_obj = json.loads(r.text)
 
             degree_sign= u'\N{DEGREE SIGN}'
-            #temperature2 = "%s%s" % (str(int(weather_obj['currently']['temperature'])), degree_sign)
-            #currently2 = weather_obj['currently']['summary']
-            temperature2 = "%s%s" % (str(int(weather_obj['list.dt']['temperature'])), degree_sign)
-            currently2 = weather_obj['list.dt']['summary']
-            forecast2 = weather_obj["hourly"]["summary"]
-
-            icon_id = weather_obj['currently']['icon']
+            actualtemp = round(1.8*(int(weather_obj['main']['temp'])-273)+32)
+            temperature2 = "%s%s" % (str(int(actualtemp)), degree_sign)
+            currentW = weather_obj['weather'][0]
+            currently2 = currentW['description']
+               
+            icon_id = currentW['main']
             icon2 = None
 
             if icon_id in icon_lookup:
@@ -190,9 +193,6 @@ class Weather(Frame):
             if self.currently != currently2:
                 self.currently = currently2
                 self.currentlyLbl.config(text=currently2)
-            if self.forecast != forecast2:
-                self.forecast = forecast2
-                self.forecastLbl.config(text=forecast2)
             if self.temperature != temperature2:
                 self.temperature = temperature2
                 self.temperatureLbl.config(text=temperature2)
@@ -208,11 +208,6 @@ class Weather(Frame):
             print "Error: %s. Cannot get weather." % e
 
         self.after(600000, self.get_weather)
-
-    @staticmethod
-    def convert_kelvin_to_fahrenheit(kelvin_temp):
-        return 1.8 * (kelvin_temp - 273) + 32
-
 
 class News(Frame):
     def __init__(self, parent, *args, **kwargs):
