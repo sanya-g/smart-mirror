@@ -42,21 +42,42 @@ def setlocale(name): #thread proof function to work with locale
 
 # maps open weather icons to
 # icon reading is not impacted by the 'lang' parameter
-icon_lookup = {
-    'Clear': "assets/Sun.png",  # clear sky day
+ #icon_lookup = {
+    #'Clear': "assets/Sun.png",  # clear sky day
   #  'wind': "assets/Wind.png",   #wind
-    'Clouds': "assets/Cloud.png",  # cloudy day
+    #'Clouds': "assets/Cloud.png",  # cloudy day
   #  'partly-cloudy-day': "assets/PartlySunny.png",  # partly cloudy day
-    'Rain': "assets/Rain.png",  # rain day
-    'Snow': "assets/Snow.png",  # snow day
+    #'Rain': "assets/Rain.png",  # rain day
+    #'Snow': "assets/Snow.png",  # snow day
    # 'snow-thin': "assets/Snow.png",  # sleet day
-    'Fog': "assets/Haze.png",  # fog day
+    #'Fog': "assets/Haze.png",  # fog day
    # 'clear-night': "assets/Moon.png",  # clear sky night
    # 'partly-cloudy-night': "assets/PartlyMoon.png",  # scattered clouds night
-    'Thunderstorm': "assets/Storm.png",  # thunderstorm
-    'Tornado': "assests/Tornado.png",    # tornado
+    #'Thunderstorm': "assets/Storm.png",  # thunderstorm
+    #'Tornado': "assests/Tornado.png",    # tornado
   #  'Hail': "assests/Hail.png"  # hail
-}
+#}
+
+icon_lookup = {
+    '01d': "images/01d@2x.png",  # clear sky day
+    '01n': "images/01n@2x.png",  # clear sky night
+    '02d': "images/02d@2x.png",  # few clouds day
+    '02n': "images/02n@2x.png",  # few clouds night
+    '03d': "images/03d@2x.png",  # scattered clouds day
+    '03n': "images/03n@2x.png",  # scattered clouds night
+    '04d': "images/04d@2x.png",  # broken clouds day
+    '04n': "images/04n@2x.png",  # broken clouds night
+    '09d': "images/09d@2x.png",  # shower rain day
+    '09n': "images/09n@2x.png",  # shower rain night
+    '10d': "images/10d@2x.png",  # rain day
+    '10n': "images/10n@2x.png",  # rain night
+    '11d': "images/11d@2x.png",  # thunderstorm day
+    '11n': "images/11n@2x.png",  # thunderstorm night
+    '13d': "images/13d@2n.png",  # snow day
+    '13n': "images/13n@2n.png",   # snow night
+    '50d': "images/50d@2x.png",  # hail
+    '50n': "images/50n@2x.png"  # hail
+} 
 
 
 class Clock(Frame):
@@ -163,14 +184,15 @@ class Weather(Frame):
 
             r = requests.request("GET", weather_req_url, headers=headers, params=querystring)
             weather_obj = json.loads(r.text)
-
+           # print(r.text)
+            
             degree_sign= u'\N{DEGREE SIGN}'
             actualtemp = round(1.8*(int(weather_obj['main']['temp'])-273)+32)
             temperature2 = "%s%s" % (str(int(actualtemp)), degree_sign)
             currentW = weather_obj['weather'][0]
             currently2 = currentW['description']
                
-            icon_id = currentW['main']
+            icon_id = currentW['icon']
             icon2 = None
 
             if icon_id in icon_lookup:
@@ -180,7 +202,7 @@ class Weather(Frame):
                if self.icon != icon2:
                     self.icon = icon2
                     image = Image.open(icon2)
-                    image = image.resize((100, 100), Image.ANTIALIAS)
+                    #image = image.resize((200, 200), Image.ANTIALIAS)
                     image = image.convert('RGB')
                     photo = ImageTk.PhotoImage(image)
 
